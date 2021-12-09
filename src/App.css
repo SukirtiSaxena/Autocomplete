@@ -1,0 +1,18 @@
+input {
+  margin: 40px;
+
+}
+
+.suggestions {
+  width: 20%;
+  margin-top:0%;
+  margin-left: 100px;
+  border-left-style:ridge;
+  border-bottom-style: ridge;
+  border-right-style: ridge;
+  cursor: pointer;
+}
+
+.suggestions:hover {
+    color: blue;
+}
