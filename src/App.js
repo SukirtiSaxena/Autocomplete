@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './App.css';
 
 function App() {
@@ -40,20 +40,27 @@ function App() {
         onChange={e => onChangeHandler(e.target.value)}
         value={text}
         onBlur={() => { // add delay because onBlur fires before onClick
-          setTimeout(() => {
-            setSuggetions([])
-          }, 100);
+          setTimeout(() => { setSuggetions([]) }, 100);
         }}
-
       />
-      {suggestions && suggestions.map((suggestions, i) =>
+      <Suggestions suggestions={suggestions} onSuggetionHandler={onSuggetionHandler} />
+
+    </div>
+  );
+}
+
+// const Suggestions = useMemo(() => ({suggestions, onSuggetionHandler}, {suggestions, onSuggetionHandler}) => {
+const Suggestions =   ({suggestions, onSuggetionHandler}) => {
+return (
+    <>
+      {suggestions.map((suggestions, i) =>
         <div className="suggestions" key={i}
           onClick={() => onSuggetionHandler(suggestions.first_name)} // set value in inputbox, empty sugg list
         >{suggestions.first_name}</div>
       )}
-    </div>
-  );
-}
+    </>
+  )
+};
 
 export default App;
 
