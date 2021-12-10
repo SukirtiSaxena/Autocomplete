@@ -1,5 +1,7 @@
 import axios from 'axios';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+// import debounce from 'lodash.debounce';
+import { DebounceInput } from 'react-debounce-input';
 import './App.css';
 
 function App() {
@@ -19,7 +21,6 @@ function App() {
         })
         setNames(newList);
       }
-
       select.current = false;
     }
     getname();
@@ -29,6 +30,10 @@ function App() {
     setSearchText(e.target.value);
   }
 
+  /*   const debounceOnSearchTextChange = useMemo(() => 
+      debounce(onSearchTextChange,300)
+    ,[]); */
+
   const onClickList = (e) => {
     select.current = true;
     setNames([]);
@@ -37,16 +42,16 @@ function App() {
 
   return (
     <div>
-      <input type="text" value={searchText}
+      <DebounceInput type="text" value={searchText}
+        debounceTimeout={300}
         onChange={onSearchTextChange} />
       {names.map(n => (
-        <div key={n._id} onClick={e => { onClickList(n.name) }}>{n.name} </div>
+        <div class="suggestions" key={n._id} onClick={e => { onClickList(n.name) }}>{n.name} </div>
       )
       )}
 
     </div>
   )
-
 };
 
 export default App;
