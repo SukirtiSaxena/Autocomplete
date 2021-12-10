@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
         onChange={e => onChangeHandler(e.target.value)}
         value={text}
         onBlur={() => { // add delay because onBlur fires before onClick
-          setTimeout(() => { setSuggetions([]) }, 100);
+          setTimeout(() => { setSuggetions([]) }, 200);
         }}
       />
       <Suggestions suggestions={suggestions} onSuggetionHandler={onSuggetionHandler} />
@@ -49,7 +49,6 @@ function App() {
   );
 }
 
-// const Suggestions = useMemo(() => ({suggestions, onSuggetionHandler}, {suggestions, onSuggetionHandler}) => {
 const Suggestions =   ({suggestions, onSuggetionHandler}) => {
 return (
     <>
@@ -63,5 +62,3 @@ return (
 };
 
 export default App;
-
-//  Memorization is never free, we are trading space for time. 
