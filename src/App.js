@@ -1,57 +1,60 @@
 import axios from 'axios';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-// import debounce from 'lodash.debounce';
-import { DebounceInput } from 'react-debounce-input';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
+import { DebounceInput } from 'react-debounce-input';
 
 function App() {
-  let select = useRef(false);
+	const select = useRef(false);
 
-  const [names, setNames] = useState([]);
-  const [searchText, setSearchText] = useState('');
+	const [searchText, setSearchText] = useState('');
+	const [names, setNames] = useState([]);
+	const [error, setError] = useState('');
 
-  useEffect(() => {
-    const getname = async () => {
-      if (searchText === null || searchText === '')
-        setNames([]);
-      if (searchText && !select.current) {
-        const response = await axios.get('https://api.disneyapi.dev/characters');
-        let newList = response.data.data.filter(l => {
-          return l.name.includes(searchText);
-        })
-        setNames(newList);
-      }
-      select.current = false;
-    }
-    getname();
-  }, [searchText, select]);
+	useEffect(() => {
+		const getNames = async () => {
+			if (searchText === null || searchText === '')
+				setNames([]);
+			if (searchText && !select.current) {
+				axios.get('https://api.disneyapi.dev/characters')
+					.then((response) => {
+						let list = response.data.data.filter(l => {
+							return l.name.includes(searchText);
+						})
+						setNames(list);
+					})
+					.catch((error) => {
+						if (error.response.status === 404)
+							return setError("ERROR: 404 Page Not Found");
+						else
+							return setError('Other ERROR');
+					});
+			};
+			select.current = false;
+		};
+		getNames();
+	}, [searchText, select])
 
-  const onSearchTextChange = (e) => {
-    setSearchText(e.target.value);
-  }
+	const onClickListItem = (n) => {
+		select.current = true;
+		setSearchText(n);
+		setNames([]);
+	}
 
-  /*   const debounceOnSearchTextChange = useMemo(() => 
-      debounce(onSearchTextChange,300)
-    ,[]); */
-
-  const onClickList = (e) => {
-    select.current = true;
-    setNames([]);
-    setSearchText(e);
-  }
-
-  return (
-    <div>
-      <DebounceInput type="text" value={searchText}
-        debounceTimeout={300}
-        onChange={onSearchTextChange} />
-      {names.map(n => (
-        <div class="suggestions" key={n._id} onClick={e => { onClickList(n.name) }}>{n.name} </div>
-      )
-      )}
-
-    </div>
-  )
+	return (
+		<div>
+			<DebounceInput type="text" value={searchText}
+				debounceTimeout={300}
+				onChange={e => setSearchText(e.target.value)}
+			/>
+			{!error && names.map(n => (
+				<div key={n._id}
+					onClick={() => { onClickListItem(n.name) }}>
+					{n.name}
+				</div>
+			))}
+			<div>{error}</div>
+		</div>
+	);
 };
 
 export default App;
